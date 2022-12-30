@@ -1,0 +1,44 @@
+name: Build CI
+
+on: [push]
+
+jobs:
+
+  build-project:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        compiler:
+          - cc: gcc-10
+            cxx: g++-10
+          - cc: gcc-11
+            cxx: g++-11
+          - cc: gcc-12
+            cxx: g++-12
+          - cc: clang-11
+            cxx: clang++-11
+          - cc: clang-12
+            cxx: clang++-12
+          - cc: clang-13
+            cxx: clang++-13
+          - cc: clang-14
+            cxx: clang++-14
+    env:
+      CC: ${{ matrix.compiler.cc }}
+      CXX: ${{ matrix.compiler.cxx }}
+      build_dir: build
+
+    steps:
+      - name: Fetch compiler
+        run: |
+          sudo apt-get install -y ${{ matrix.compiler.cc }} ${{ matrix.compiler.cxx }}
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Create build directory
+        run: mkdir -p ${build_dir}
+      - name: Configure project
+        run: cd ${build_dir} && cmake ..
+      - name: Build project
+        run: cmake --build ${build_dir} -- -j$(nproc)
+      - name: Run unit tests
+        run: cd ${build_dir} && ctest
