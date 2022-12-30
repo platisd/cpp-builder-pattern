@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(CppProject)
+project(builder-pattern)
 
 set(CMAKE_CXX_STANDARD 20)
 add_compile_options(
@@ -24,6 +24,12 @@ add_compile_options(
         -Wextra
         -Werror
 )
+
+add_executable(basic_builder basic-builder.cpp)
+
+add_executable(late_access_builder late-access-builder.cpp)
+
+add_executable(builder_with_interfaces builder-with-interfaces.cpp)
 
 add_subdirectory(external)
 enable_testing()
