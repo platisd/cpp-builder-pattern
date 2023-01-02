@@ -26,11 +26,5 @@ add_compile_options(
 )
 
 add_executable(basic_builder basic-builder.cpp)
-
 add_executable(late_access_builder late-access-builder.cpp)
-
 add_executable(builder_with_interfaces builder-with-interfaces.cpp)
-
-add_subdirectory(external)
-enable_testing()
-add_subdirectory(test)
