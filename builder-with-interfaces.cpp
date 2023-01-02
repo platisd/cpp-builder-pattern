@@ -58,31 +58,31 @@ public:
         return std::move(mMenu);
     }
 
-    MenuBuilder& withTitle(std::string title) override
+    Builder& withTitle(std::string title) override
     {
         mMenu->mTitle = title;
         return *this;
     }
 
-    MenuBuilder& withBorder(int pixels) override
+    Builder& withBorder(int pixels) override
     {
         mMenu->mBorder = pixels;
         return *this;
     }
 
-    MenuBuilder& addOption(std::string option) override
+    Builder& addOption(std::string option) override
     {
         mMenu->mOptions.emplace_back(option);
         return *this;
     }
 
-    MenuBuilder& horizontal() override
+    Builder& horizontal() override
     {
         mMenu->mHorizontal = true;
         return *this;
     }
 
-    MenuBuilder& vertical() override
+    Builder& vertical() override
     {
         mMenu->mHorizontal = false;
         return *this;
