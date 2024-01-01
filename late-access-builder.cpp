@@ -7,75 +7,69 @@ namespace
 class Menu
 {
 public:
-    class Impl
+    class Builder
     {
     public:
-        void show() const {}
-        void select(int /* index */) const {}
-
-    private:
-        friend class Menu;
-
-        std::string mId{};
-        std::string mTitle{};
-        std::vector<std::string> mOptions{};
-        bool mHorizontal{false};
-        int mBorder{0};
-
-        Impl(std::string id)
-            : mId{id}
+        Builder(std::string id)
+            : mMenu{new Menu{id}}
         {
         }
+
+        Builder& withTitle(std::string title)
+        {
+            mMenu->mTitle = title;
+            return *this;
+        }
+        Builder& withBorder(int pixels)
+        {
+            mMenu->mBorder = pixels;
+            return *this;
+        }
+        Builder& addOption(std::string o)
+        {
+            mMenu->mOpts.push_back(o);
+            return *this;
+        }
+        Builder& horizontal()
+        {
+            mMenu->mHorizontal = true;
+            return *this;
+        }
+        Builder& vertical()
+        {
+            mMenu->mHorizontal = false;
+            return *this;
+        }
+
+        std::unique_ptr<Menu> build()
+        {
+            return std::move(mMenu);
+        }
+
+    private:
+        std::unique_ptr<Menu> mMenu{};
     };
 
-    Menu(std::string id)
-        : mImpl{new Impl{id}}
-    {
-    }
-
-    std::unique_ptr<Impl> build()
-    {
-        return std::move(mImpl);
-    }
-
-    Menu& withTitle(std::string title)
-    {
-        mImpl->mTitle = title;
-        return *this;
-    }
-
-    Menu& withBorder(int pixels)
-    {
-        mImpl->mBorder = pixels;
-        return *this;
-    }
-
-    Menu& addOption(std::string option)
-    {
-        mImpl->mOptions.emplace_back(option);
-        return *this;
-    }
-
-    Menu& horizontal()
-    {
-        mImpl->mHorizontal = true;
-        return *this;
-    }
-
-    Menu& vertical()
-    {
-        mImpl->mHorizontal = false;
-        return *this;
-    }
+    void show() const {}
+    void select(int /* index */) const {}
 
 private:
-    std::unique_ptr<Impl> mImpl{};
+    std::string mId{};
+    std::string mTitle{};
+    std::vector<std::string> mOpts{};
+    bool mHorizontal{false};
+    int mBorder{0};
+
+    Menu(std::string id)
+        : mId{id}
+    {
+    }
 };
 } // namespace
 
 int main()
 {
-    const auto menu = Menu{"main"}
+    const auto menu = Menu::Builder{"main"}
                           .withTitle("Main Menu")
                           .withBorder(1)
                           .addOption("Option 1")

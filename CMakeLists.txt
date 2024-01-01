@@ -20,6 +20,7 @@ add_compile_options(
         -Wshadow
         -Wsign-promo
         -Wstrict-aliasing
+        -Wno-ctor-dtor-privacy
         -Wall
         -Wextra
         -Werror

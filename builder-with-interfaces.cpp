@@ -24,78 +24,72 @@ public:
     virtual std::unique_ptr<Menu> build()          = 0;
 };
 
-class MenuBuilder : public Builder
+class ProductionMenu : public Menu
 {
 public:
-    class DefaultMenu : public Menu
+    class ProductionBuilder : public Builder
     {
     public:
-        void show() const override {}
-        void select(int /* index */) const override {}
-
-    private:
-        friend class MenuBuilder;
-
-        std::string mId{};
-        std::string mTitle{};
-        std::vector<std::string> mOptions{};
-        bool mHorizontal{false};
-        int mBorder{0};
-
-        DefaultMenu(std::string id)
-            : mId{id}
+        ProductionBuilder(std::string id)
+            : mMenu{new ProductionMenu{id}}
         {
         }
+
+        Builder& withTitle(std::string title)
+        {
+            mMenu->mTitle = title;
+            return *this;
+        }
+        Builder& withBorder(int pixels)
+        {
+            mMenu->mBorder = pixels;
+            return *this;
+        }
+        Builder& addOption(std::string o)
+        {
+            mMenu->mOpts.push_back(o);
+            return *this;
+        }
+        Builder& horizontal()
+        {
+            mMenu->mHorizontal = true;
+            return *this;
+        }
+        Builder& vertical()
+        {
+            mMenu->mHorizontal = false;
+            return *this;
+        }
+
+        std::unique_ptr<Menu> build()
+        {
+            return std::move(mMenu);
+        }
+
+    private:
+        std::unique_ptr<ProductionMenu> mMenu{};
     };
 
-    MenuBuilder(std::string id)
-        : mMenu{new DefaultMenu{id}}
-    {
-    }
-
-    std::unique_ptr<Menu> build() override
-    {
-        return std::move(mMenu);
-    }
-
-    Builder& withTitle(std::string title) override
-    {
-        mMenu->mTitle = title;
-        return *this;
-    }
-
-    Builder& withBorder(int pixels) override
-    {
-        mMenu->mBorder = pixels;
-        return *this;
-    }
-
-    Builder& addOption(std::string option) override
-    {
-        mMenu->mOptions.emplace_back(option);
-        return *this;
-    }
-
-    Builder& horizontal() override
-    {
-        mMenu->mHorizontal = true;
-        return *this;
-    }
-
-    Builder& vertical() override
-    {
-        mMenu->mHorizontal = false;
-        return *this;
-    }
+    void show() const {}
+    void select(int /* index */) const {}
 
 private:
-    std::unique_ptr<DefaultMenu> mMenu{};
+    std::string mId{};
+    std::string mTitle{};
+    std::vector<std::string> mOpts{};
+    bool mHorizontal{false};
+    int mBorder{0};
+
+    ProductionMenu(std::string id)
+        : mId{id}
+    {
+    }
 };
 } // namespace
 
 int main()
 {
-    const auto menu = MenuBuilder{"main"}
+    const auto menu = ProductionMenu::ProductionBuilder{"main"}
                           .withTitle("Main Menu")
                           .withBorder(1)
                           .addOption("Option 1")
